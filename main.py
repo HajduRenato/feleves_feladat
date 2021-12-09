@@ -13,7 +13,7 @@ def output():
     respond = {}
     y = 0
     for x in data.find():
-        respond[y] = str(x)+'</br>'
+        respond[y] = str(x) + '</br>'
         y = y + 1
     return f'Users: {respond}</br>'
 
@@ -28,7 +28,9 @@ def Hello():
         <h3>Mongo adatbázis kiiratása: (GET)</h3>
         <p>http://127.0.0.1:5000/output</p>
         <h3>Mongo adatbázis feltöltése adatokkal: (POST)</h3>
-        <p>http://127.0.0.1:5000/input</p>
+        <p>http://127.0.0.1:5000/input</p> 
+        <h3>Mongo adatbázisban szereplő felhasználó beléptetése: (GET)</h3>
+        <p>http://127.0.0.1:5000/login</p>
       </form>
    </body>
 </html>"""
@@ -57,17 +59,16 @@ def input():
 @app.route('/login', methods=['GET'])
 def login():
     f = request.args.get('fname')
-    l = request.args.get('lname')
-    g = request.args.get('gender')
     p = request.args.get('passw')
-    if f and l and p and g == 'male' or g == 'female' and f and l and p:
-        new_input = {
-            'fname': f,
-            'lname': l,
-            'gender': g,
-            'passw': p
-        }
-    return'Logged in.'
+
+    if f and p:
+        res = data.find_one({'$and': [{'fname': f}, {'passw': p}]})
+
+        if res:
+            return '<h2>Logged in.</h2>'
+        else:
+            return '<h2>Wrong data! Try again</h2>'
+
 
 if __name__ == '__main__':
     app.run()
